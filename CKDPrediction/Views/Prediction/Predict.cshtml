@@ -1,0 +1,226 @@
+﻿@model CKDPrediction.Models.CKDInput
+@{
+    ViewData["Title"] = "CKD Prediction";
+}
+
+<div class="predict-page">
+    <div class="predict-header">
+        <h2><i class="fas fa-brain"></i> CKD Risk Assessment</h2>
+        <p>Enter patient lab values to get an instant AI-powered prediction. All fields are required.</p>
+    </div>
+
+    <form asp-action="Predict" method="post" id="predictForm">
+        @Html.AntiForgeryToken()
+
+        <!-- Section 1: Basic Info -->
+        <div class="form-card">
+            <div class="form-card-header"><i class="fas fa-user"></i> Patient Information</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label asp-for="Age"></label>
+                    <input asp-for="Age" class="form-control" placeholder="e.g. 48" min="1" max="120" />
+                    <span asp-validation-for="Age" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="BloodPressure"></label>
+                    <input asp-for="BloodPressure" class="form-control" placeholder="e.g. 80" />
+                    <span asp-validation-for="BloodPressure" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="SpecificGravity"></label>
+                    <select asp-for="SpecificGravity" class="form-control">
+                        <option value="">Select...</option>
+                        <option value="1.005">1.005</option>
+                        <option value="1.010">1.010</option>
+                        <option value="1.015">1.015</option>
+                        <option value="1.020">1.020</option>
+                        <option value="1.025">1.025</option>
+                    </select>
+                    <span asp-validation-for="SpecificGravity" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Albumin"></label>
+                    <select asp-for="Albumin" class="form-control">
+                        <option value="">Select level (0-5)...</option>
+                        <option value="0">0 - None</option>
+                        <option value="1">1 - Trace</option>
+                        <option value="2">2 - Mild</option>
+                        <option value="3">3 - Moderate</option>
+                        <option value="4">4 - High</option>
+                        <option value="5">5 - Very High</option>
+                    </select>
+                    <span asp-validation-for="Albumin" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Sugar"></label>
+                    <select asp-for="Sugar" class="form-control">
+                        <option value="">Select level (0-5)...</option>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                    <span asp-validation-for="Sugar" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Blood Tests -->
+        <div class="form-card">
+            <div class="form-card-header"><i class="fas fa-tint"></i> Blood Test Results</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label asp-for="BloodGlucoseRandom"></label>
+                    <input asp-for="BloodGlucoseRandom" class="form-control" placeholder="e.g. 148" />
+                    <span asp-validation-for="BloodGlucoseRandom" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="BloodUrea"></label>
+                    <input asp-for="BloodUrea" class="form-control" placeholder="e.g. 53" />
+                    <span asp-validation-for="BloodUrea" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="SerumCreatinine"></label>
+                    <input asp-for="SerumCreatinine" class="form-control" placeholder="e.g. 1.8" step="0.1" />
+                    <span asp-validation-for="SerumCreatinine" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Sodium"></label>
+                    <input asp-for="Sodium" class="form-control" placeholder="e.g. 137" />
+                    <span asp-validation-for="Sodium" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Potassium"></label>
+                    <input asp-for="Potassium" class="form-control" placeholder="e.g. 4.6" step="0.1" />
+                    <span asp-validation-for="Potassium" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Haemoglobin"></label>
+                    <input asp-for="Haemoglobin" class="form-control" placeholder="e.g. 12.5" step="0.1" />
+                    <span asp-validation-for="Haemoglobin" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PackedCellVolume"></label>
+                    <input asp-for="PackedCellVolume" class="form-control" placeholder="e.g. 38" />
+                    <span asp-validation-for="PackedCellVolume" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="WhiteBloodCellCount"></label>
+                    <input asp-for="WhiteBloodCellCount" class="form-control" placeholder="e.g. 8400" />
+                    <span asp-validation-for="WhiteBloodCellCount" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="RedBloodCellCount"></label>
+                    <input asp-for="RedBloodCellCount" class="form-control" placeholder="e.g. 4.7" step="0.1" />
+                    <span asp-validation-for="RedBloodCellCount" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Categorical -->
+        <div class="form-card">
+            <div class="form-card-header"><i class="fas fa-flask"></i> Clinical Findings</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label asp-for="RedBloodCells"></label>
+                    <select asp-for="RedBloodCells" class="form-control">
+                        <option value="">Select...</option>
+                        <option value="1">Normal</option>
+                        <option value="0">Abnormal</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PusCell"></label>
+                    <select asp-for="PusCell" class="form-control">
+                        <option value="">Select...</option>
+                        <option value="1">Normal</option>
+                        <option value="0">Abnormal</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PusCellClumps"></label>
+                    <select asp-for="PusCellClumps" class="form-control">
+                        <option value="">Select...</option>
+                        <option value="1">Present</option>
+                        <option value="0">Not Present</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Bacteria"></label>
+                    <select asp-for="Bacteria" class="form-control">
+                        <option value="">Select...</option>
+                        <option value="1">Present</option>
+                        <option value="0">Not Present</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Hypertension"></label>
+                    <select asp-for="Hypertension" class="form-control">
+                        <option value="">Select...</option>
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DiabetesMellitus"></label>
+                    <select asp-for="DiabetesMellitus" class="form-control">
+                        <option value="">Select...</option>
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="CoronaryArteryDisease"></label>
+                    <select asp-for="CoronaryArteryDisease" class="form-control">
+                        <option value="">Select...</option>
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Appetite"></label>
+                    <select asp-for="Appetite" class="form-control">
+                        <option value="">Select...</option>
+                        <option value="1">Good</option>
+                        <option value="0">Poor</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PedalEdema"></label>
+                    <select asp-for="PedalEdema" class="form-control">
+                        <option value="">Select...</option>
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Anaemia"></label>
+                    <select asp-for="Anaemia" class="form-control">
+                        <option value="">Select...</option>
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-submit-area">
+            <button type="submit" class="btn-predict" id="submitBtn">
+                <i class="fas fa-brain"></i>
+                <span>Analyze with AI</span>
+                <div class="btn-loader" style="display:none"><i class="fas fa-spinner fa-spin"></i></div>
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('predictForm').addEventListener('submit', function() {
+            document.getElementById('submitBtn').querySelector('span').textContent = 'Analyzing...';
+            document.getElementById('submitBtn').querySelector('.btn-loader').style.display = 'inline';
+        });
+    </script>
+}

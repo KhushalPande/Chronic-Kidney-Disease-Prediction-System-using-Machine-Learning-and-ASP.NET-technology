@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../CKDTrainer/CKDTrainer.csproj" />
+  <Project Path="CKDPrediction.csproj" />
+</Solution>

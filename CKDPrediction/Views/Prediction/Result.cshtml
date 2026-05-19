@@ -1,0 +1,120 @@
+﻿@model CKDPrediction.Models.CKDPredictionResult
+@{
+    ViewData["Title"] = "Prediction Result";
+    var color = Model.HasCKD ? "#ef4444" : "#10b981";
+    var bgClass = Model.HasCKD ? "result-ckd" : "result-normal";
+}
+
+<div class="result-page">
+    <!-- Main Result Card -->
+    <div class="result-hero @bgClass">
+        <div class="result-icon">
+            <i class="fas @(Model.HasCKD ? "fa-exclamation-triangle" : "fa-check-circle")"></i>
+        </div>
+        <h1 class="result-title">
+            @(Model.HasCKD ? "CKD Risk Detected" : "No CKD Detected")
+        </h1>
+        <p class="result-subtitle">
+            @(Model.HasCKD
+                ? "Our AI model has detected indicators consistent with Chronic Kidney Disease. Please consult a nephrologist."
+                : "Your lab values do not indicate chronic kidney disease. Maintain a healthy lifestyle.")
+        </p>
+    </div>
+
+    <div class="result-grid">
+        <!-- Confidence Meter -->
+        <div class="result-card">
+            <h3><i class="fas fa-tachometer-alt"></i> AI Confidence Score</h3>
+            <div class="confidence-display">
+                <div class="confidence-number" style="color: @color">@Model.Confidence.ToString("F1")%</div>
+                <div class="progress-bar-wrapper">
+                    <div class="progress-bar-fill" style="width: @Model.Confidence%; background: @color;"></div>
+                </div>
+                <div class="confidence-label">@Model.RiskLevel Risk Level</div>
+            </div>
+        </div>
+
+        <!-- Probability Donut -->
+        <div class="result-card">
+            <h3><i class="fas fa-chart-pie"></i> Probability Analysis</h3>
+            <canvas id="probabilityChart" width="200" height="200"></canvas>
+            <p class="chart-label">CKD Probability: <strong>@((Model.Probability * 100).ToString("F1"))%</strong></p>
+        </div>
+
+        <!-- Risk Badge -->
+        <div class="result-card">
+            <h3><i class="fas fa-shield-alt"></i> Risk Assessment</h3>
+            <div class="risk-badge-large" style="background: @color">
+                @Model.RiskLevel Risk
+            </div>
+            <div class="risk-indicators">
+                <div class="risk-row">
+                    <span>CKD Detected</span>
+                    <span class="badge @(Model.HasCKD ? "badge-danger" : "badge-success")">
+                        @(Model.HasCKD ? "Yes" : "No")
+                    </span>
+                </div>
+                <div class="risk-row">
+                    <span>Confidence</span>
+                    <span>@Model.Confidence.ToString("F1")%</span>
+                </div>
+                <div class="risk-row">
+                    <span>Risk Level</span>
+                    <span>@Model.RiskLevel</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="recommendations-section">
+        <h3><i class="fas fa-lightbulb"></i> AI Health Recommendations</h3>
+        <div class="recommendations-grid">
+            @foreach (var rec in Model.Recommendations)
+            {
+                <div class="recommendation-item">@rec</div>
+            }
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="result-actions">
+        <a asp-action="Predict" class="btn-action-secondary">
+            <i class="fas fa-redo"></i> New Prediction
+        </a>
+        <a asp-action="History" class="btn-action-secondary">
+            <i class="fas fa-history"></i> View History
+        </a>
+        <a asp-controller="Dashboard" asp-action="Index" class="btn-action-primary">
+            <i class="fas fa-chart-pie"></i> Go to Dashboard
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const ctx = document.getElementById('probabilityChart').getContext('2d');
+        const ckdProb = @((Model.Probability * 100).ToString("F1", System.Globalization.CultureInfo.InvariantCulture));
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['CKD Probability', 'Normal'],
+                datasets: [{
+                    data: [ckdProb, 100 - ckdProb],
+                    backgroundColor: ['@color', '#e5e7eb'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: '75%',
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+
+        // Animate progress bar
+        setTimeout(() => {
+            document.querySelector('.progress-bar-fill').style.transition = 'width 1.5s ease';
+        }, 100);
+    </script>
+}

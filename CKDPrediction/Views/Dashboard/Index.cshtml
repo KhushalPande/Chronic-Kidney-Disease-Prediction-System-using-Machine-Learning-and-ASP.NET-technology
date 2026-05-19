@@ -1,0 +1,130 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<!-- Stats Row -->
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-card-icon blue"><i class="fas fa-brain"></i></div>
+        <div class="stat-card-info">
+            <span class="stat-card-value">@ViewBag.Total</span>
+            <span class="stat-card-label">Total Predictions</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-icon red"><i class="fas fa-exclamation-triangle"></i></div>
+        <div class="stat-card-info">
+            <span class="stat-card-value">@ViewBag.CKDCount</span>
+            <span class="stat-card-label">CKD Detected</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-icon green"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-card-info">
+            <span class="stat-card-value">@ViewBag.NonCKDCount</span>
+            <span class="stat-card-label">No CKD</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-icon orange"><i class="fas fa-fire"></i></div>
+        <div class="stat-card-info">
+            <span class="stat-card-value">@ViewBag.HighRisk</span>
+            <span class="stat-card-label">High Risk Cases</span>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="charts-row">
+    <div class="chart-card large">
+        <div class="chart-card-header">
+            <h3>Prediction Trends (Last 7 Days)</h3>
+        </div>
+        <canvas id="trendChart" height="100"></canvas>
+    </div>
+    <div class="chart-card">
+        <div class="chart-card-header"><h3>CKD Distribution</h3></div>
+        <canvas id="pieChart" height="200"></canvas>
+    </div>
+</div>
+
+<!-- Recent Predictions -->
+<div class="recent-section">
+    <div class="section-header-inline">
+        <h3>Recent Predictions</h3>
+        <a asp-controller="Prediction" asp-action="History">View All →</a>
+    </div>
+    <div class="recent-table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Age</th>
+                    <th>Blood Pressure</th>
+                    <th>Creatinine</th>
+                    <th>Risk Level</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ViewBag.Recent != null)
+                {
+                    foreach (var item in ViewBag.Recent)
+                    {
+                        <tr>
+                            <td>@item.PredictedAt.ToString("MMM dd, HH:mm")</td>
+                            <td>@item.Age</td>
+                            <td>@item.BloodPressure</td>
+                            <td>@item.SerumCreatinine.ToString("F2")</td>
+                            <td><span class="risk-badge @item.RiskLevel.ToLower()">@item.RiskLevel</span></td>
+                            <td>
+                                @if (item.HasCKD)
+                                {
+                                    <span class="badge badge-danger">CKD</span>
+                                }
+                                else
+                                {
+
+                                    <span class="badge badge-success">Normal</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="6" class="empty-state">No predictions yet. <a asp-controller="Prediction" asp-action="Predict">Run your first prediction →</a></td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const labels = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ChartLabels ?? new string[0]));
+        const ckdData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ChartCKD ?? new int[0]));
+        const normalData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ChartNonCKD ?? new int[0]));
+
+        new Chart(document.getElementById('trendChart'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: 'CKD Cases', data: ckdData, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)', tension: 0.4, fill: true },
+                    { label: 'Normal', data: normalData, borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', tension: 0.4, fill: true }
+                ]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } }
+        });
+
+        new Chart(document.getElementById('pieChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['CKD Detected', 'No CKD'],
+                datasets: [{ data: [@ViewBag.CKDCount, @ViewBag.NonCKDCount], backgroundColor: ['#ef4444', '#10b981'], borderWidth: 0 }]
+            },
+            options: { responsive: true, cutout: '65%', plugins: { legend: { position: 'bottom' } } }
+        });
+    </script>
+}

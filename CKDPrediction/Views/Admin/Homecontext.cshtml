@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Admin Panel";
+}
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-card-icon blue"><i class="fas fa-users"></i></div>
+        <div class="stat-card-info">
+            <span class="stat-card-value">@ViewBag.TotalUsers</span>
+            <span class="stat-card-label">Total Users</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-icon purple"><i class="fas fa-brain"></i></div>
+        <div class="stat-card-info">
+            <span class="stat-card-value">@ViewBag.TotalPredictions</span>
+            <span class="stat-card-label">All Predictions</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-icon red"><i class="fas fa-exclamation-triangle"></i></div>
+        <div class="stat-card-info">
+            <span class="stat-card-value">@ViewBag.CKDCases</span>
+            <span class="stat-card-label">CKD Cases</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-icon green"><i class="fas fa-calendar-day"></i></div>
+        <div class="stat-card-info">
+            <span class="stat-card-value">@ViewBag.TodayPredictions</span>
+            <span class="stat-card-label">Today's Predictions</span>
+        </div>
+    </div>
+</div>
+<div class="admin-links">
+    <a asp-action="Users" class="admin-link-card">
+        <i class="fas fa-users-cog"></i>
+        <span>Manage Users</span>
+    </a>
+    <a asp-controller="Prediction" asp-action="History" class="admin-link-card">
+        <i class="fas fa-database"></i>
+        <span>All Predictions</span>
+    </a>
+    <a asp-controller="Report" asp-action="ExportPdf" class="admin-link-card">
+        <i class="fas fa-file-pdf"></i>
+        <span>Export PDF Report</span>
+    </a>
+    <a asp-controller="Report" asp-action="ExportExcel" class="admin-link-card">
+        <i class="fas fa-file-excel"></i>
+        <span>Export Excel</span>
+    </a>
+</div>

@@ -1,0 +1,93 @@
+﻿@model List<CKDPrediction.Models.PredictionHistory>
+@{
+    ViewData["Title"] = "Prediction History";
+}
+
+<div class="history-page">
+    <!-- Search Bar -->
+    <div class="history-toolbar">
+        <form method="get" asp-action="History" class="search-form">
+            <input type="text" name="search" value="@ViewBag.Search" placeholder="Filter by risk level..." class="search-input" />
+            <button type="submit" class="btn-search"><i class="fas fa-search"></i></button>
+        </form>
+        <div class="export-btns">
+            <a asp-controller="Report" asp-action="ExportExcel" class="btn-export excel">
+                <i class="fas fa-file-excel"></i> Excel
+            </a>
+            <a asp-controller="Report" asp-action="ExportPdf" class="btn-export pdf">
+                <i class="fas fa-file-pdf"></i> PDF
+            </a>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Date</th>
+                    <th>Age</th>
+                    <th>BP</th>
+                    <th>Creatinine</th>
+                    <th>Haemoglobin</th>
+                    <th>Risk</th>
+                    <th>Result</th>
+                    <th>Probability</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.PredictedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td>@item.Age</td>
+                            <td>@item.BloodPressure</td>
+                            <td>@item.SerumCreatinine.ToString("F2")</td>
+                            <td>@item.Haemoglobin.ToString("F1")</td>
+                            <td><span class="risk-badge @item.RiskLevel.ToLower()">@item.RiskLevel</span></td>
+                            <td>
+                                @if (item.HasCKD)
+                                {
+                                    <span class="badge badge-danger">CKD</span>
+                                }
+                                else
+                                {
+
+                                    <span class="badge badge-success">Normal</span>
+                                }
+                            </td>
+                            <td>@((item.Probability * 100).ToString("F1"))%</td>
+                            <td>
+                                <form asp-action="Delete" method="post" onsubmit="return confirm('Delete this record?')">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn-delete"><i class="fas fa-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="10" class="empty-state">No predictions found.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    @if (ViewBag.TotalPages > 1)
+    {
+        <div class="pagination">
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <a asp-action="History" asp-route-page="@i"
+                   class="page-btn @(i == ViewBag.Page ? "active" : "")">@i</a>
+            }
+        </div>
+    }
+</div>

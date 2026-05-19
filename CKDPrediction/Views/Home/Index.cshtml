@@ -1,0 +1,116 @@
+﻿@{
+    ViewData["Title"] = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- HERO SECTION -->
+<section class="hero-section">
+    <div class="hero-bg-gradient"></div>
+    <div class="hero-content">
+        <div class="hero-badge"><i class="fas fa-robot"></i> AI-Powered Healthcare</div>
+        <h1 class="hero-title">Predict Kidney Disease<br><span class="gradient-text">Before It's Too Late</span></h1>
+        <p class="hero-subtitle">Advanced machine learning model trained on clinical data to detect Chronic Kidney Disease with high accuracy. Early detection saves lives.</p>
+        <div class="hero-cta">
+            <a asp-area="Identity" asp-page="/Account/Register" class="btn-cta-primary">
+                <i class="fas fa-brain"></i> Start Free Prediction
+            </a>
+            <a href="#features" class="btn-cta-secondary">Learn More <i class="fas fa-arrow-down"></i></a>
+        </div>
+        <div class="hero-stats">
+            <div class="stat-item"><span class="stat-num" data-target="95">0</span><span>%</span><span class="stat-label">Accuracy</span></div>
+            <div class="stat-divider"></div>
+            <div class="stat-item"><span class="stat-num" data-target="400">0</span><span>+</span><span class="stat-label">Cases Trained</span></div>
+            <div class="stat-divider"></div>
+            <div class="stat-item"><span class="stat-num" data-target="24">0</span><span></span><span class="stat-label">Clinical Features</span></div>
+        </div>
+    </div>
+    <div class="hero-visual">
+        <div class="kidney-animation">
+            <div class="pulse-ring"></div>
+            <div class="pulse-ring delay-1"></div>
+            <div class="kidney-icon"><i class="fas fa-kidneys"></i></div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES SECTION -->
+<section id="features" class="features-section">
+    <div class="section-header">
+        <span class="section-tag">CAPABILITIES</span>
+        <h2>Why Choose NephroAI?</h2>
+    </div>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon teal"><i class="fas fa-brain"></i></div>
+            <h3>ML.NET FastTree Model</h3>
+            <p>Trained on the UCI CKD dataset using gradient boosted trees with 95%+ accuracy on clinical validation.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon blue"><i class="fas fa-chart-line"></i></div>
+            <h3>Risk Analytics</h3>
+            <p>Get probability scores, confidence meters, and risk level classification (Low / Medium / High).</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon purple"><i class="fas fa-lightbulb"></i></div>
+            <h3>AI Recommendations</h3>
+            <p>Personalized health recommendations based on your specific lab values and medical history.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon orange"><i class="fas fa-history"></i></div>
+            <h3>Prediction History</h3>
+            <p>Track all your predictions over time, view trends, and export reports in PDF or Excel format.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon green"><i class="fas fa-shield-alt"></i></div>
+            <h3>Secure & Private</h3>
+            <p>Your health data is protected with ASP.NET Identity authentication and SQL Server encryption.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon red"><i class="fas fa-file-pdf"></i></div>
+            <h3>Export Reports</h3>
+            <p>Download detailed PDF and Excel reports of your prediction history for sharing with doctors.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ABOUT SECTION -->
+<section id="about" class="about-section">
+    <div class="about-content">
+        <div class="about-text">
+            <span class="section-tag">ABOUT CKD</span>
+            <h2>Chronic Kidney Disease: The Silent Killer</h2>
+            <p>CKD affects over <strong>850 million people</strong> worldwide and is often called the "silent killer" because symptoms appear only in advanced stages. Early detection through AI analysis of blood and urine parameters can dramatically improve outcomes.</p>
+            <div class="about-points">
+                <div class="point"><i class="fas fa-check-circle"></i> 24 clinical features analyzed</div>
+                <div class="point"><i class="fas fa-check-circle"></i> Blood pressure & glucose monitoring</div>
+                <div class="point"><i class="fas fa-check-circle"></i> Creatinine & haemoglobin analysis</div>
+                <div class="point"><i class="fas fa-check-circle"></i> Instant results with AI confidence score</div>
+            </div>
+            <a asp-area="Identity" asp-page="/Account/Register" class="btn-cta-primary">Get Your Free Assessment</a>
+        </div>
+        <div class="about-visual">
+            <div class="metric-cards">
+                <div class="metric-card"><i class="fas fa-tint"></i><span>Blood Tests</span></div>
+                <div class="metric-card"><i class="fas fa-flask"></i><span>Urine Tests</span></div>
+                <div class="metric-card"><i class="fas fa-heartbeat"></i><span>Vitals</span></div>
+                <div class="metric-card"><i class="fas fa-dna"></i><span>Biomarkers</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        // Animated counters
+        document.querySelectorAll('.stat-num').forEach(el => {
+            const target = parseInt(el.dataset.target);
+            let count = 0;
+            const step = target / 60;
+            const timer = setInterval(() => {
+                count += step;
+                if (count >= target) { el.textContent = target; clearInterval(timer); }
+                else el.textContent = Math.floor(count);
+            }, 25);
+        });
+    </script>
+}

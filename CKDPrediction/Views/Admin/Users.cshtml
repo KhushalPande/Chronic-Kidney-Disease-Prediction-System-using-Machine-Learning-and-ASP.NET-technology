@@ -1,0 +1,28 @@
+﻿@model List<CKDPrediction.Models.ApplicationUser>
+@{
+    ViewData["Title"] = "Manage Users";
+}
+<div class="table-card">
+    <table class="data-table">
+        <thead>
+            <tr><th>Name</th><th>Email</th><th>Joined</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@(user.FullName ?? user.UserName)</td>
+                    <td>@user.Email</td>
+                    <td>@user.CreatedAt.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        <form asp-action="DeleteUser" method="post" onsubmit="return confirm('Delete this user?')">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@user.Id" />
+                            <button type="submit" class="btn-delete"><i class="fas fa-trash"></i> Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] — NephroAI</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <!-- DASHBOARD LAYOUT WITH SIDEBAR -->
+        <div class="app-wrapper">
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <div class="brand-logo">
+                        <div class="brand-icon"><i class="fas fa-kidneys"></i></div>
+                        <span class="brand-name">NephroAI</span>
+                    </div>
+                    <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                </div>
+                <nav class="sidebar-nav">
+                    <div class="nav-section-title">MAIN</div>
+                    <a asp-controller="Dashboard" asp-action="Index" class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")">
+                        <i class="fas fa-chart-pie"></i><span>Dashboard</span>
+                    </a>
+                    <a asp-controller="Prediction" asp-action="Predict" class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Prediction" && ViewContext.RouteData.Values["action"]?.ToString() == "Predict" ? "active" : "")">
+                        <i class="fas fa-brain"></i><span>New Prediction</span>
+                    </a>
+                    <a asp-controller="Prediction" asp-action="History" class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "History" ? "active" : "")">
+                        <i class="fas fa-history"></i><span>History</span>
+                    </a>
+                    @* <div class="nav-section-title">REPORTS</div>
+                    <a asp-controller="Report" asp-action="Index" class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Report" ? "active" : "")">
+                        <i class="fas fa-file-export"></i><span>Export Reports</span>
+                    </a> *@
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <div class="nav-section-title">ADMIN</div>
+                        <a asp-controller="Admin" asp-action="Index" class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+                            <i class="fas fa-tachometer-alt"></i><span>Admin Panel</span>
+                        </a>
+                        <a asp-controller="Admin" asp-action="Users" class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Users" ? "active" : "")">
+                            <i class="fas fa-users-cog"></i><span>Manage Users</span>
+                        </a>
+                    }
+                </nav>
+                <div class="sidebar-footer">
+                    <div class="user-info">
+                        <div class="user-avatar">@User.Identity?.Name?[0]</div>
+                        <div class="user-details">
+                            <span class="user-name">@User.Identity?.Name</span>
+                            <span class="user-role">@(User.IsInRole("Admin") ? "Administrator" : "Patient")</span>
+                        </div>
+                    </div>
+                    <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/" method="post">
+                        <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
+                    </form>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <header class="top-bar">
+                    <div class="page-title">@ViewData["Title"]</div>
+                    <div class="top-bar-actions">
+                        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+                            <i class="fas fa-moon" id="themeIcon"></i>
+                        </button>
+                        <a asp-controller="Prediction" asp-action="Predict" class="btn-predict-quick">
+                            <i class="fas fa-plus"></i> New Prediction
+                        </a>
+                    </div>
+                </header>
+
+                <main class="content-area">
+                    @RenderBody()
+                </main>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- PUBLIC LAYOUT -->
+        <nav class="public-nav">
+            <div class="nav-container">
+                <a class="nav-brand" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-kidneys"></i> NephroAI
+                </a>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#about">About</a>
+                    <a asp-area="Identity" asp-page="/Account/Login" class="btn-login">Sign In</a>
+                    <a asp-area="Identity" asp-page="/Account/Register" class="btn-register">Get Started</a>
+                </div>
+            </div>
+        </nav>
+        <main>
+            @RenderBody()
+        </main>
+        <footer class="public-footer">
+            <div class="footer-content">
+                <span><i class="fas fa-kidneys"></i> NephroAI &copy; 2025</span>
+                <span>AI-Powered Kidney Disease Prediction</span>
+            </div>
+        </footer>
+    }
+
+    <div id="toast-container"></div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
